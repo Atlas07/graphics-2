@@ -9,7 +9,12 @@ import {
   drawArc,
 } from './utils';
 
-const drawSquare = (x, y, width, ctx) => {
+const drawSquare = (
+  x: number,
+  y: number,
+  width: number,
+  ctx: CanvasRenderingContext2D,
+) => {
   ctx.beginPath();
 
   ctx.moveTo(x + width, y);
