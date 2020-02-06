@@ -1,0 +1,40 @@
+{
+  "name": "graphics",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel public/index.html",
+    "build": "parcel build public/index.html",
+    "lint": "./node_modules/.bin/eslint src/**/*.{js,jsx,ts,tsx}",
+    "lint:write": "eslint --debug src//.{js,jsx,ts,tsx} --fix --quiet"
+  },
+  "dependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/parser": "^2.19.0",
+    "babel-plugin-styled-components": "^1.10.7",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-plugin-import": "^2.20.1",
+    "husky": "^4.2.1",
+    "lint-staged": "^10.0.7",
+    "styled-components": ">= 2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx, ts, tsx}": [
+      "eslint --fix --quiet"
+    ]
+  }
+}
