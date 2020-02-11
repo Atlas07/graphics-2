@@ -10,12 +10,10 @@ import {
   degToRadian,
 } from './utils';
 import {
-  R_SMALL,
-  R_MEDIUM,
-  R_BIG,
-
   X_CENTER,
   Y_CENTER,
+  R_SMALL,
+  Proportions,
 } from './constants';
 
 const drawSquare = (
@@ -35,88 +33,104 @@ const drawSquare = (
   ctx.stroke();
 };
 
-function draw() {
-  const canvas = <HTMLCanvasElement> document.getElementById('canvas');
 
-  if (canvas.getContext) {
-    const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+const draw = (
+  smallRadius: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  ctx: CanvasRenderingContext2D,
+) => {
+  const R_SMALL = smallRadius * Proportions.SMALL;
+  const R_MEDIUM = R_SMALL * Proportions.MEDIUM;
+  const R_BIG = R_SMALL * Proportions.BIG;
 
-    drawXAxis(ctx);
-    drawYAxis(ctx);
-    drawDividerXLines(ctx);
-    drawDividerYLines(ctx);
+  drawXAxis(canvasWidth, ctx);
+  drawYAxis(canvasHeight, ctx);
+  drawDividerXLines(canvasWidth, ctx);
+  drawDividerYLines(canvasHeight, ctx);
 
-    drawArc(X_CENTER, Y_CENTER, R_BIG, 0, 360, ctx);
-    drawSquare(X_CENTER, Y_CENTER, R_SMALL * 2, ctx);
+  drawArc(X_CENTER, Y_CENTER, R_BIG, 0, 360, ctx);
+  drawSquare(X_CENTER, Y_CENTER, R_SMALL * 2, ctx);
 
-    // centered
-    drawArc(X_CENTER, Y_CENTER, R_SMALL, 0, 360, ctx);
-    // top / bottom
-    drawArc(
-      X_CENTER,
-      Y_CENTER - 2 * R_SMALL,
-      R_SMALL,
-      135,
-      405,
-      ctx,
-    );
-    drawArc(
-      X_CENTER,
-      Y_CENTER + 2 * R_SMALL,
-      R_SMALL,
-      -45,
-      225,
-      ctx,
-    );
-    // rigth / left
-    drawArc(
-      X_CENTER + 2 * R_SMALL,
-      Y_CENTER,
-      R_SMALL,
-      -135,
-      135,
-      ctx,
-    );
-    drawArc(
-      X_CENTER - 2 * R_SMALL,
-      Y_CENTER,
-      R_SMALL,
-      45,
-      315,
-      ctx,
-    );
+  // centered
+  drawArc(X_CENTER, Y_CENTER, R_SMALL, 0, 360, ctx);
+  // top / bottom
+  drawArc(
+    X_CENTER,
+    Y_CENTER - 2 * R_SMALL,
+    R_SMALL,
+    135,
+    405,
+    ctx,
+  );
+  drawArc(
+    X_CENTER,
+    Y_CENTER + 2 * R_SMALL,
+    R_SMALL,
+    -45,
+    225,
+    ctx,
+  );
+  // rigth / left
+  drawArc(
+    X_CENTER + 2 * R_SMALL,
+    Y_CENTER,
+    R_SMALL,
+    -135,
+    135,
+    ctx,
+  );
+  drawArc(
+    X_CENTER - 2 * R_SMALL,
+    Y_CENTER,
+    R_SMALL,
+    45,
+    315,
+    ctx,
+  );
 
-    const bigRightCircleCoords = getDotCoords(X_CENTER, Y_CENTER, R_BIG, -45);
-    const bigLeftCircleCoords = getDotCoords(X_CENTER, Y_CENTER, R_BIG, 225);
+  const bigRightCircleCoords = getDotCoords(X_CENTER, Y_CENTER, R_BIG, -45);
+  const bigLeftCircleCoords = getDotCoords(X_CENTER, Y_CENTER, R_BIG, 225);
 
-    drawArc(
-      bigRightCircleCoords.x - (R_MEDIUM * Math.cos(degToRadian(45))),
-      bigRightCircleCoords.y + (R_MEDIUM * Math.sin(degToRadian(45))),
-      R_MEDIUM,
-      225,
-      405,
-      ctx,
-    );
-    drawArc(
-      bigLeftCircleCoords.x + (R_MEDIUM * Math.cos(degToRadian(45))),
-      bigLeftCircleCoords.y + (R_MEDIUM * Math.cos(degToRadian(45))),
-      R_MEDIUM,
-      135,
-      315,
-      ctx,
-    );
-  }
+  drawArc(
+    bigRightCircleCoords.x - (R_MEDIUM * Math.cos(degToRadian(45))),
+    bigRightCircleCoords.y + (R_MEDIUM * Math.sin(degToRadian(45))),
+    R_MEDIUM,
+    225,
+    405,
+    ctx,
+  );
+  drawArc(
+    bigLeftCircleCoords.x + (R_MEDIUM * Math.cos(degToRadian(45))),
+    bigLeftCircleCoords.y + (R_MEDIUM * Math.cos(degToRadian(45))),
+    R_MEDIUM,
+    135,
+    315,
+    ctx,
+  );
 }
 
-window.onload = draw;
+window.onload = () => {
+  const input = <HTMLInputElement> document.getElementById('radius');
+  const canvas = <HTMLCanvasElement> document.getElementById('canvas');
+  
+  if (!canvas.getContext) {
+    throw new Error('No canvas');
+  }
 
-// const topArcDots = getArcDots(200, 150, 25, 270, 360).map(item => +item.x.toFixed(2));
-// const leftMediumArcDots = getArcDots(
-//   bigRightCircleCoords.x - 26,
-//   bigRightCircleCoords.y + 26,
-//   37.5,
-//   90,
-//   180,
-// ).map(item => +item.x.toFixed(2));
+  const canvasWidth = canvas.width - 100;
+  const canvasHeight = canvas.height - 100;
 
-// const test = R.intersection(topArcDots, leftMediumArcDots);
+  const info = document.getElementById('info');
+  info.innerHTML = `Division: ${canvasWidth / 10}`;
+
+  const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+  
+  input.onkeyup = () => {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    draw(+input.value, canvasWidth, canvasHeight, ctx);
+  };
+
+  //* initial drawing
+  draw(R_SMALL, canvasWidth, canvasHeight, ctx);
+};
