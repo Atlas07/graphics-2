@@ -33,21 +33,23 @@ const drawSquare = (
   ctx.stroke();
 };
 
-
 const draw = (
   smallRadius: number,
   canvasWidth: number,
   canvasHeight: number,
   ctx: CanvasRenderingContext2D,
 ) => {
-  const R_SMALL = smallRadius * Proportions.SMALL;
-  const R_MEDIUM = R_SMALL * Proportions.MEDIUM;
-  const R_BIG = R_SMALL * Proportions.BIG;
+  const R_SMALL = smallRadius * Proportions.R_SMALL;
+  const R_MEDIUM = R_SMALL * Proportions.R_MEDIUM;
+  const R_BIG = R_SMALL * Proportions.R_BIG;
 
   drawXAxis(canvasWidth, ctx);
   drawYAxis(canvasHeight, ctx);
   drawDividerXLines(canvasWidth, ctx);
   drawDividerYLines(canvasHeight, ctx);
+  
+
+  ctx.lineWidth = 2;
 
   drawArc(X_CENTER, Y_CENTER, R_BIG, 0, 360, ctx);
   drawSquare(X_CENTER, Y_CENTER, R_SMALL * 2, ctx);
@@ -108,6 +110,8 @@ const draw = (
     315,
     ctx,
   );
+
+  ctx.lineWidth = 1;
 }
 
 window.onload = () => {
@@ -121,16 +125,16 @@ window.onload = () => {
   const canvasWidth = canvas.width - 100;
   const canvasHeight = canvas.height - 100;
 
-  const info = document.getElementById('info');
+  const info = document.getElementById('info-division');
   info.innerHTML = `Division: ${canvasWidth / 10}`;
 
   const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
-  
-  input.onkeyup = () => {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    draw(+input.value, canvasWidth, canvasHeight, ctx);
-  };
 
   //* initial drawing
   draw(R_SMALL, canvasWidth, canvasHeight, ctx);
+  
+  input.onkeyup = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw(+input.value, canvasWidth, canvasHeight, ctx);
+  };
 };
