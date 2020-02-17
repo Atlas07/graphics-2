@@ -10,7 +10,9 @@
     "lint:write": "eslint --debug src//.{js,jsx,ts,tsx} --fix --quiet"
   },
   "dependencies": {
+    "@types/mathjs": "^6.0.4",
     "@types/ramda": "^0.26.41",
+    "mathjs": "^6.6.0",
     "parcel-bundler": "^1.12.4",
     "ramda": "^0.27.0",
     "typescript": "^3.7.5"
