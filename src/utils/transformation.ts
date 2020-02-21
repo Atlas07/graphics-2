@@ -13,11 +13,11 @@ interface Transformation {
   y: number;
 }
 
-export const translate = (startDot: Dot, endDot: Dot): Transformation => {
+export const translate = (startDot: Dot, delta: Dot): Transformation => {
   const m1 = M.matrix([startDot.x, startDot.y, 1]);
   const m2 = M.matrix([
-    [1, 0, endDot.x],
-    [0, 1, endDot.y],
+    [1, 0, delta.x],
+    [0, 1, delta.y],
     [0, 0, 1],
   ]);
   const matrix = M.multiply(m2, m1);
