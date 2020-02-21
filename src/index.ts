@@ -7,8 +7,7 @@ import {
   drawArc,
   degToRadian,
   translate,
-  rotateX,
-  rotateY,
+  rotate,
 } from "./utils";
 import { X_CENTER, Y_CENTER, R_SMALL, Proportions } from "./constants";
 
@@ -73,18 +72,16 @@ const drawCircle = (ctx: CanvasRenderingContext2D) => {
   ctx.moveTo(X_CENTER, Y_CENTER);
   ctx.lineTo(X_CENTER + 100, Y_CENTER);
 
-  const transformedDot1 = translate({ x: X_CENTER, y: Y_CENTER }, { x: 10, y: 10 });
-  const transformedDot2 = translate({ x: X_CENTER + 100, y: Y_CENTER }, { x: 10, y: 10 });
+  // const transformedDot1 = translate({ x: X_CENTER, y: Y_CENTER }, { x: 10, y: 10 });
+  // const transformedDot2 = translate({ x: X_CENTER + 100, y: Y_CENTER }, { x: 10, y: 10 });
 
-  ctx.moveTo(transformedDot1.x, transformedDot1.y);
-  ctx.lineTo(transformedDot2.x, transformedDot2.y);
+  // ctx.moveTo(transformedDot1.x, transformedDot1.y);
+  // ctx.lineTo(transformedDot2.x, transformedDot2.y);
 
-  // const rotatedDot1 = rotateX(transformedDot1, 30);
-  const rotatedDot2 = rotateX({ x: X_CENTER, y: Y_CENTER }, 45);
+  const rotatedDot1 = rotate({ x: X_CENTER, y: Y_CENTER }, X_CENTER, Y_CENTER, -90);
+  const rotatedDot2 = rotate({ x: X_CENTER + 100, y: Y_CENTER }, X_CENTER, Y_CENTER, -90);
 
-  console.log({ rotatedDot2 });
-
-  ctx.moveTo(X_CENTER, Y_CENTER);
+  ctx.moveTo(rotatedDot1.x, rotatedDot1.y);
   ctx.lineTo(rotatedDot2.x, rotatedDot2.y);
 
   ctx.stroke();
