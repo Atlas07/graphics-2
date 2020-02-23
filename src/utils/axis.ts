@@ -1,12 +1,12 @@
 import * as R from 'ramda';
 
-import { build } from './build';
 import {
   INITIAL_X,
   INITIAL_Y,
   AXIS_LENGTH_DELTA,
   AFFINE_COUNT,
 } from '../constants';
+import { build } from './build';
 import { affineTransformation } from '../transformations/affine';
 
 
