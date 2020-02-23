@@ -6,6 +6,9 @@ export const R_SMALL = 25;
 export const X_CENTER = 500 + INITIAL_X;
 export const Y_CENTER = 500 + INITIAL_X;
 
+export const AXIS_LENGTH_DELTA = 10;
+export const AFFINE_COUNT = 8;
+
 interface IProportions {
   R_SMALL: number;
   R_MEDIUM: number;

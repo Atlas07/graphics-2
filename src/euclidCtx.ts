@@ -33,7 +33,7 @@ const draw = (smallRadius: number, ctx: CanvasRenderingContext2D) => {
   //   { x: 300, y: 0 }
   // );
 
-  // build(euclidTransformedArc, ctx);
+  // build(ctx, euclidTransformedArc);
 
   // drawSquare(X_CENTER, Y_CENTER, R_SMALL * 2, ctx);
 

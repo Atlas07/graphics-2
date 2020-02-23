@@ -17,8 +17,8 @@ const buildAffine = () => {
 
   // drawXAxis(canvasWidth, ctx);
   // drawYAxis(canvasHeight, ctx);
-  drawDividerXAffineLines(canvasWidth, ctx);
-  drawDividerYAffineLines(canvasHeight, ctx);
+  drawDividerXAffineLines(canvasWidth, 20, ctx);
+  drawDividerYAffineLines(canvasHeight, 20, ctx);
 };
 
 export default buildAffine;

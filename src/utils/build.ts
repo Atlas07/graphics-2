@@ -1,6 +1,8 @@
-export const build = (dots: Array<{ x: number; y: number }>, ctx: CanvasRenderingContext2D) => {
+import * as R from 'ramda';
+
+export const build = R.curry((ctx: CanvasRenderingContext2D, dots: Array<{ x: number; y: number }>) => {
   const [firstDot, ...restDots] = dots;
 
   ctx.moveTo(firstDot.x, firstDot.y);
   restDots.forEach(dot => ctx.lineTo(dot.x, dot.y));
-};
+});

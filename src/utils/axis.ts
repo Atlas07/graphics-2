@@ -1,14 +1,8 @@
-import * as M from 'mathjs';
-import * as R from 'ramda';
+import * as R from "ramda";
 
-import {
-  build
-} from './build';
-import {
-  INITIAL_X,
-  INITIAL_Y,
-} from '../constants';
-import { affineTransformation } from '../transformations/affine';
+import { build } from "./build";
+import { INITIAL_X, INITIAL_Y, AXIS_LENGTH_DELTA, AFFINE_COUNT } from "../constants";
+import { affineTransformation } from "../transformations/affine";
 
 const getAxisDot = (xCoef: number, yCoef: number, delta: number) => {
   return {
@@ -30,8 +24,8 @@ export const drawXAxis = (width: number, ctx: CanvasRenderingContext2D) => {
 
   ctx.stroke();
 
-  ctx.strokeText('0', INITIAL_X - 10, INITIAL_Y - 10);
-  ctx.strokeText('X', width, INITIAL_Y - 10);
+  ctx.strokeText("0", INITIAL_X - 10, INITIAL_Y - 10);
+  ctx.strokeText("X", width, INITIAL_Y - 10);
 };
 
 export const drawYAxis = (height: number, ctx: CanvasRenderingContext2D) => {
@@ -45,7 +39,7 @@ export const drawYAxis = (height: number, ctx: CanvasRenderingContext2D) => {
   ctx.moveTo(INITIAL_X, height + INITIAL_Y);
   ctx.lineTo(INITIAL_X + 5, height);
 
-  ctx.strokeText('Y', INITIAL_X - 20, height);
+  ctx.strokeText("Y", INITIAL_X - 20, height);
   ctx.stroke();
 };
 
@@ -53,7 +47,7 @@ export const drawDividerXLines = (width: number, ctx: CanvasRenderingContext2D) 
   const dividerLength = width / 10;
 
   ctx.beginPath();
-  ctx.strokeStyle = '#808080';
+  ctx.strokeStyle = "#808080";
 
   for (let i = 1; i <= 10; i += 1) {
     ctx.moveTo(i * dividerLength + INITIAL_X, INITIAL_Y);
@@ -61,14 +55,14 @@ export const drawDividerXLines = (width: number, ctx: CanvasRenderingContext2D) 
   }
 
   ctx.stroke();
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = "black";
 };
 
 export const drawDividerYLines = (height: number, ctx: CanvasRenderingContext2D) => {
   const dividerLength = height / 10;
 
   ctx.beginPath();
-  ctx.strokeStyle = '#808080';
+  ctx.strokeStyle = "#808080";
 
   for (let i = 1; i <= 10; i += 1) {
     ctx.moveTo(INITIAL_X, i * dividerLength + INITIAL_Y);
@@ -76,59 +70,51 @@ export const drawDividerYLines = (height: number, ctx: CanvasRenderingContext2D)
   }
 
   ctx.stroke();
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = "black";
 };
 
-export const drawDividerXAffineLines = (width: number, ctx: CanvasRenderingContext2D) => {
-  const dividerLength = width / 10;
+export const drawDividerXAffineLines = (
+  width: number,
+  angle: number,
+  ctx: CanvasRenderingContext2D,
+) => {
+  const dividerLength = width / AXIS_LENGTH_DELTA;
 
   ctx.beginPath();
-  ctx.strokeStyle = '#808080';
+  ctx.strokeStyle = "#808080";
 
-  const dots1 = Array(4).fill(null).map((_, i) => getAxisDot(i, 0, dividerLength));
-  const dots2 = Array(4).fill(null).map((_, i) => getAxisDot(i, 1, dividerLength));
-  const dots3 = Array(4).fill(null).map((_, i) => getAxisDot(i, 2, dividerLength));
-  const dots4 = Array(4).fill(null).map((_, i) => getAxisDot(i, 3, dividerLength));
+  const dots = R.times(time => {
+    return Array(AFFINE_COUNT)
+      .fill(null)
+      .map((_, i) => getAxisDot(i, time, dividerLength));
+  }, AFFINE_COUNT);
 
-  const affineAngleTransformation = affineTransformation(20);
-  
-  const affineDots1 = dots1.map(affineAngleTransformation);
-  const affineDots2 = dots2.map(affineAngleTransformation);
-  const affineDots3 = dots3.map(affineAngleTransformation);
-  const affineDots4 = dots4.map(affineAngleTransformation);
-
-  build(affineDots1, ctx);
-  build(affineDots2, ctx);
-  build(affineDots3, ctx);
-  build(affineDots4, ctx);
+  const affineDots = dots.map(lineDots => lineDots.map(affineTransformation(angle)));
+  affineDots.forEach(build(ctx));
 
   ctx.stroke();
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = "black";
 };
 
-export const drawDividerYAffineLines = (width: number, ctx: CanvasRenderingContext2D) => {
-  const dividerLength = width / 10;
+export const drawDividerYAffineLines = (
+  width: number,
+  angle: number,
+  ctx: CanvasRenderingContext2D,
+) => {
+  const dividerLength = width / AXIS_LENGTH_DELTA;
 
   ctx.beginPath();
-  ctx.strokeStyle = '#808080';
+  ctx.strokeStyle = "#808080";
 
-  const dots1 = Array(4).fill(null).map((_, i) => getAxisDot(0, i, dividerLength));
-  const dots2 = Array(4).fill(null).map((_, i) => getAxisDot(1, i, dividerLength));
-  const dots3 = Array(4).fill(null).map((_, i) => getAxisDot(2, i, dividerLength));
-  const dots4 = Array(4).fill(null).map((_, i) => getAxisDot(3, i, dividerLength));
+  const dots = R.times(time => {
+    return Array(AFFINE_COUNT)
+      .fill(null)
+      .map((_, i) => getAxisDot(time, i, dividerLength));
+  }, AFFINE_COUNT);
 
-  const affineAngleTransformation = affineTransformation(20);
-  
-  const affineDots1 = dots1.map(affineAngleTransformation);
-  const affineDots2 = dots2.map(affineAngleTransformation);
-  const affineDots3 = dots3.map(affineAngleTransformation);
-  const affineDots4 = dots4.map(affineAngleTransformation);
-
-  build(affineDots1, ctx);
-  build(affineDots2, ctx);
-  build(affineDots3, ctx);
-  build(affineDots4, ctx);
+  const affineDots = dots.map(lineDots => lineDots.map(affineTransformation(angle)));
+  affineDots.forEach(build(ctx));
 
   ctx.stroke();
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = "black";
 };
