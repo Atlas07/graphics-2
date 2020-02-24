@@ -6,10 +6,10 @@ import {
   build,
   drawArc,
   getArcDots,
+  getDotCoords,
+  degToRadian,
 } from './utils';
-import {
-  euclidTransformations,
-} from './transformations/euclid';
+import { euclidTransformations } from './transformations/euclid';
 
 import {
   X_CENTER,
@@ -18,122 +18,272 @@ import {
   Proportions,
 } from './constants';
 
-const draw = (smallRadius: number, ctx: CanvasRenderingContext2D) => {
+const draw = (
+  smallRadius: number,
+  centerX: number,
+  centerY: number,
+  rotation: number,
+  ctx: CanvasRenderingContext2D,
+) => {
   const R_SMALL = smallRadius * Proportions.R_SMALL;
   const R_MEDIUM = R_SMALL * Proportions.R_MEDIUM;
   const R_BIG = R_SMALL * Proportions.R_BIG;
 
+  ctx.beginPath();
   ctx.lineWidth = 2;
 
-  // drawArc(X_CENTER, Y_CENTER, R_BIG, -90, 90, ctx);
-  // const arcDots = getArcDots(X_CENTER, Y_CENTER, R_BIG, -90, 90);
-  // const euclidTransformedArc = euclidTransformations(
-  //   arcDots,
-  //   { x: X_CENTER, y: Y_CENTER, angle: -180 },
-  //   { x: 300, y: 0 }
-  // );
+  drawArc(centerX, centerY, R_BIG, 0, 360, ctx);
+  // centered
+  drawArc(centerX, centerY, R_SMALL, 0, 360, ctx);
 
-  // build(ctx, euclidTransformedArc);
+  // top / bottom
+  const topArcDots = getArcDots(
+    centerX,
+    centerY - 2 * R_SMALL,
+    R_SMALL,
+    135,
+    405,
+  );
+  const euclidTopArcDots = euclidTransformations(
+    topArcDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidTopArcDots);
 
-  // drawSquare(X_CENTER, Y_CENTER, R_SMALL * 2, ctx);
+  const bottomArcDots = getArcDots(
+    centerX,
+    centerY + 2 * R_SMALL,
+    R_SMALL,
+    -45,
+    225,
+  );
+  const euclidBottomArcDots = euclidTransformations(
+    bottomArcDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidBottomArcDots);
 
-  // // centered
-  // drawArc(X_CENTER, Y_CENTER, R_SMALL, 0, 360, ctx);
-  // // top / bottom
-  // drawArc(X_CENTER, Y_CENTER - 2 * R_SMALL, R_SMALL, 135, 405, ctx);
-  // drawArc(X_CENTER, Y_CENTER + 2 * R_SMALL, R_SMALL, -45, 225, ctx);
-  // // rigth / left
-  // drawArc(X_CENTER + 2 * R_SMALL, Y_CENTER, R_SMALL, -135, 135, ctx);
-  // drawArc(X_CENTER - 2 * R_SMALL, Y_CENTER, R_SMALL, 45, 315, ctx);
+  // rigth / left
+  const rightArcDots = getArcDots(
+    centerX + 2 * R_SMALL,
+    centerY,
+    R_SMALL,
+    -135,
+    135,
+  );
+  const euclidRightArcDots = euclidTransformations(
+    rightArcDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidRightArcDots);
 
-  // const bigRightCircleCoords = getDotCoords(X_CENTER, Y_CENTER, R_BIG, -45);
-  // const bigLeftCircleCoords = getDotCoords(X_CENTER, Y_CENTER, R_BIG, 225);
+  const leftArcDots = getArcDots(
+    centerX - 2 * R_SMALL,
+    centerY,
+    R_SMALL,
+    45,
+    315,
+  );
+  const euclidLefttArcDots = euclidTransformations(
+    leftArcDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidLefttArcDots);
 
-  // drawArc(
-  //   bigRightCircleCoords.x - R_MEDIUM * Math.cos(degToRadian(45)),
-  //   bigRightCircleCoords.y + R_MEDIUM * Math.sin(degToRadian(45)),
-  //   R_MEDIUM,
-  //   225,
-  //   405,
-  //   ctx,
-  // );
-  // drawArc(
-  //   bigLeftCircleCoords.x + R_MEDIUM * Math.cos(degToRadian(45)),
-  //   bigLeftCircleCoords.y + R_MEDIUM * Math.cos(degToRadian(45)),
-  //   R_MEDIUM,
-  //   135,
-  //   315,
-  //   ctx,
-  // );
+  // square
+  const squareDots = [
+    {
+      x: centerX + R_SMALL * 2,
+      y: centerY,
+    },
+    {
+      x: centerX,
+      y: centerY + R_SMALL * 2,
+    },
+    {
+      x: centerX - R_SMALL * 2,
+      y: centerY,
+    },
+    {
+      x: centerX,
+      y: centerY - R_SMALL * 2,
+    },
+    {
+      x: centerX + R_SMALL * 2,
+      y: centerY,
+    },
+  ];
+  const euclidSquareDots = euclidTransformations(
+    squareDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidSquareDots);
+
+  // medium
+  const bigRightCircleCoords = getDotCoords(
+    centerX,
+    centerY,
+    R_BIG,
+    -45,
+  );
+  const bigLeftCircleCoords = getDotCoords(
+    centerX,
+    centerY,
+    R_BIG,
+    225,
+  );
+  const bigRightCircleDots = getArcDots(
+    bigRightCircleCoords.x -
+      R_MEDIUM * Math.cos(degToRadian(45)),
+    bigRightCircleCoords.y +
+      R_MEDIUM * Math.sin(degToRadian(45)),
+    R_MEDIUM,
+    225,
+    405,
+  );
+  const bigLeftCircleDots = getArcDots(
+    bigLeftCircleCoords.x +
+      R_MEDIUM * Math.cos(degToRadian(45)),
+    bigLeftCircleCoords.y +
+      R_MEDIUM * Math.cos(degToRadian(45)),
+    R_MEDIUM,
+    135,
+    315,
+  );
+  const euclidBigRightCircleDots = euclidTransformations(
+    bigRightCircleDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  const euclidBigLeftCircleDots = euclidTransformations(
+    bigLeftCircleDots,
+    { x: centerX, y: centerY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidBigRightCircleDots);
+  build(ctx, euclidBigLeftCircleDots);
 
   ctx.stroke();
   ctx.lineWidth = 1;
 };
 
 const buildEuclid = () => {
-  const input = <HTMLInputElement>document.getElementById("radius");
-  const canvas = <HTMLCanvasElement>document.getElementById("euclid");
+  const canvas = <HTMLCanvasElement>(
+    document.getElementById('euclid')
+  );
+  const buildInput = <HTMLInputElement>(
+    document.getElementById('build')
+  );
+  const radius = <HTMLInputElement>(
+    document.getElementById('euclidRadius')
+  );
+  const centerX = <HTMLInputElement>(
+    document.getElementById('euclidCenterX')
+  );
+  const centerY = <HTMLInputElement>(
+    document.getElementById('euclidCenterY')
+  );
+  const rotation = <HTMLInputElement>(
+    document.getElementById('euclidRotation')
+  );
 
   if (!canvas.getContext) {
-    throw new Error("No canvas");
+    throw new Error('No canvas');
   }
 
   const canvasWidth = canvas.width - 100;
   const canvasHeight = canvas.height - 100;
 
-  const info = document.getElementById("info-division");
+  const info = document.getElementById('info-division');
   info.innerHTML = `Division: ${canvasWidth / 10}`;
 
-  const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+  const ctx: CanvasRenderingContext2D = canvas.getContext(
+    '2d',
+  );
 
+  //* initial drawing
   drawXAxis(canvasWidth, ctx);
   drawYAxis(canvasHeight, ctx);
   drawDividerXLines(canvasWidth, ctx);
   drawDividerYLines(canvasHeight, ctx);
+  draw(
+    +radius.value,
+    +centerX.value,
+    +centerY.value,
+    +rotation.value,
+    ctx,
+  );
 
-  //* initial drawing
-  // draw(R_SMALL, ctx);
+  buildInput.onclick = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // input.onkeyup = () => {
-  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //   draw(+input.value, ctx);
-  // };
+    drawXAxis(canvasWidth, ctx);
+    drawYAxis(canvasHeight, ctx);
+    drawDividerXLines(canvasWidth, ctx);
+    drawDividerYLines(canvasHeight, ctx);
+    draw(
+      +radius.value,
+      +centerX.value,
+      +centerY.value,
+      +rotation.value,
+      ctx,
+    );
+  };
+
+  window.onkeydown = (event: any) => {
+    // TODO: refactor
+    // if (
+    //   event.key !== 'ArrowRight' ||
+    //   event.key !== 'ArrowLeft' ||
+    //   event.key !== 'ArrowRight' ||
+    //   event.key !== 'ArrowDown'
+    // ) {
+    //   return;
+    // }
+
+    const inputX = <HTMLInputElement>(
+      document.getElementById('euclidCenterX')
+    );
+    const inputY = <HTMLInputElement>(
+      document.getElementById('euclidCenterY')
+    );
+
+    let x = 0;
+    let y = 0;
+
+    if (event.key === 'ArrowRight') {
+      x += 10;
+    }
+    if (event.key === 'ArrowLeft') {
+      x -= 10;
+    }
+    if (event.key === 'ArrowDown') {
+      y += 10;
+    }
+    if (event.key === 'ArrowUp') {
+      y -= 10;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawXAxis(canvasWidth, ctx);
+    drawYAxis(canvasHeight, ctx);
+    drawDividerXLines(canvasWidth, ctx);
+    drawDividerYLines(canvasHeight, ctx);
+    draw(
+      +radius.value,
+      +inputX.value + x,
+      +inputY.value + y,
+      +rotation.value,
+      ctx,
+    );
+    inputX.value = `${+centerX.value + x}`;
+    inputY.value = `${+centerY.value + y}`;
+  };
 };
 
 export default buildEuclid;
-
-
-// const drawSquare = (x: number, y: number, width: number, ctx: CanvasRenderingContext2D) => {
-//   ctx.beginPath();
-
-//   ctx.moveTo(x + width, y);
-//   ctx.lineTo(x, y + width);
-//   ctx.lineTo(x - width, y);
-//   ctx.lineTo(x, y - width);
-//   ctx.lineTo(x + width, y);
-
-//   ctx.stroke();
-// };
-
-// const drawCircle = (ctx: CanvasRenderingContext2D) => {
-//   ctx.beginPath();
-//   ctx.lineWidth = 2;
-
-//   ctx.moveTo(X_CENTER, Y_CENTER);
-//   ctx.lineTo(X_CENTER + 100, Y_CENTER);
-
-//   // const transformedDot1 = translate({ x: X_CENTER, y: Y_CENTER }, { x: 10, y: 10 });
-//   // const transformedDot2 = translate({ x: X_CENTER + 100, y: Y_CENTER }, { x: 10, y: 10 });
-
-//   // ctx.moveTo(transformedDot1.x, transformedDot1.y);
-//   // ctx.lineTo(transformedDot2.x, transformedDot2.y);
-
-//   const rotatedDot1 = rotate({ x: X_CENTER, y: Y_CENTER }, X_CENTER, Y_CENTER, -90);
-//   const rotatedDot2 = rotate({ x: X_CENTER + 100, y: Y_CENTER }, X_CENTER, Y_CENTER, -90);
-
-//   ctx.moveTo(rotatedDot1.x, rotatedDot1.y);
-//   ctx.lineTo(rotatedDot2.x, rotatedDot2.y);
-
-//   ctx.stroke();
-//   ctx.lineWidth = 1;
-// };

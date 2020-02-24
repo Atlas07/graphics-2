@@ -9,10 +9,27 @@
   <title>Lab0</title>
 </head>
 <body>
-  <input type="text" placeholder="radius" id="radius" value="25">
+<div class="input">
+  <p>Radius</p>
+  <input type="text" placeholder="radius" id="euclidRadius" value="25">
+</div>
+<div class="input">
+  <p>center X</p>
+  <input type="text" placeholder="radius" id="euclidCenterX" value="520">
+</div>
+<div class="input">
+  <p>Center y</p>
+  <input type="text" placeholder="radius" id="euclidCenterY" value="520">
+</div>
+<div class="input">
+  <p>Rotation</p>
+  <input type="text" placeholder="radius" id="euclidRotation" value="0">
+</div>
+<button type="submit" id="build">Build</button>
+
   <p id="info-division"></p>
   <canvas id="euclid" width="1100" height="1100"></canvas>
-  <canvas id="affine" width="1100" height="1100"></canvas>
+  <!-- <canvas id="affine" width="1100" height="1100"></canvas> -->
 
   <script src="../src/index.ts"></script>
 </body>

@@ -3,5 +3,5 @@ import buildAffine from './affineCtx';
 
 window.onload = () => {
   buildEuclid();
-  buildAffine();
+  // buildAffine();
 };
