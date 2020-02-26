@@ -236,15 +236,14 @@ const buildEuclid = () => {
   };
 
   window.onkeydown = (event: any) => {
-    // TODO: refactor
-    // if (
-    //   event.key !== 'ArrowRight' ||
-    //   event.key !== 'ArrowLeft' ||
-    //   event.key !== 'ArrowRight' ||
-    //   event.key !== 'ArrowDown'
-    // ) {
-    //   return;
-    // }
+    if (
+      event.key !== 'ArrowRight' &&
+      event.key !== 'ArrowLeft' &&
+      event.key !== 'ArrowUp' &&
+      event.key !== 'ArrowDown'
+    ) {
+      return;
+    }
 
     const inputX = <HTMLInputElement>(
       document.getElementById('euclidCenterX')
@@ -286,4 +285,6 @@ const buildEuclid = () => {
   };
 };
 
-export default buildEuclid;
+window.onload = () => {
+  buildEuclid();
+};

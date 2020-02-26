@@ -7,3 +7,13 @@ img {
   height: 400px;
   margin-top: 18px;
 }
+
+.inputs {
+  display: flex;
+  align-items: center;
+}
+
+button {
+  height: 20px;
+  align-self: flex-end;
+}
