@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 import {
   drawXAxis,
   drawYAxis,
@@ -206,11 +208,27 @@ const buildEuclid = () => {
     '2d',
   );
 
-  //* initial drawing
-  drawXAxis(canvasWidth, ctx);
-  drawYAxis(canvasHeight, ctx);
-  drawDividerXLines(canvasWidth, ctx);
-  drawDividerYLines(canvasHeight, ctx);
+  const buildGrid = R.pipe(
+    R.map(build(ctx)),
+  );
+
+  //* initial draw
+  const axesDots = [
+    ...drawXAxis(canvasWidth, ctx),
+    ...drawYAxis(canvasHeight, ctx),
+  ];
+  const dividerDots = [
+    ...drawDividerXLines(canvasWidth),
+    ...drawDividerYLines(canvasHeight),
+  ];
+
+  ctx.beginPath();
+  buildGrid(axesDots);
+  ctx.strokeStyle = '#808080';
+  buildGrid(dividerDots);
+  ctx.stroke();
+  ctx.strokeStyle = 'black';
+
   draw(
     +radius.value,
     +centerX.value,
@@ -222,10 +240,24 @@ const buildEuclid = () => {
   buildInput.onclick = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawXAxis(canvasWidth, ctx);
-    drawYAxis(canvasHeight, ctx);
-    drawDividerXLines(canvasWidth, ctx);
-    drawDividerYLines(canvasHeight, ctx);
+    // eslint-disable-next-line
+    const axesDots = [
+      ...drawXAxis(canvasWidth, ctx),
+      ...drawYAxis(canvasHeight, ctx),
+    ];
+    // eslint-disable-next-line
+    const dividerDots = [
+      ...drawDividerXLines(canvasWidth),
+      ...drawDividerYLines(canvasHeight),
+    ];
+
+    ctx.beginPath();
+    buildGrid(axesDots);
+    ctx.strokeStyle = '#808080';
+    buildGrid(dividerDots);
+    ctx.stroke();
+    ctx.strokeStyle = 'black';
+
     draw(
       +radius.value,
       +centerX.value,
@@ -269,10 +301,24 @@ const buildEuclid = () => {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawXAxis(canvasWidth, ctx);
-    drawYAxis(canvasHeight, ctx);
-    drawDividerXLines(canvasWidth, ctx);
-    drawDividerYLines(canvasHeight, ctx);
+    // eslint-disable-next-line
+    const axesDots = [
+      ...drawXAxis(canvasWidth, ctx),
+      ...drawYAxis(canvasHeight, ctx),
+    ];
+    // eslint-disable-next-line
+    const dividerDots = [
+      ...drawDividerXLines(canvasWidth),
+      ...drawDividerYLines(canvasHeight),
+    ];
+
+    ctx.beginPath();
+    buildGrid(axesDots);
+    ctx.strokeStyle = '#808080';
+    buildGrid(dividerDots);
+    ctx.stroke();
+    ctx.strokeStyle = 'black';
+
     draw(
       +radius.value,
       +inputX.value + x,

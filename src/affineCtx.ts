@@ -1,8 +1,10 @@
+import * as R from 'ramda';
+
 import {
-  drawAffineXAxis,
-  drawAffineYAxis,
-  drawDividerXAffineLines,
-  drawDividerYAffineLines,
+  drawXAxis,
+  drawYAxis,
+  drawDividerXLines,
+  drawDividerYLines,
   getArcDots,
   getDotCoords,
   build,
@@ -16,11 +18,16 @@ import {
   Proportions,
 } from './constants';
 
+const getAffineVector = R.pipe(
+  (vectorString: string) => vectorString.split(','),
+  R.map((vector: string) => +vector),
+);
+
 const draw = (
   smallRadius: number,
   centerX: number,
   centerY: number,
-  angle: number,
+  vectors: { e1: number[]; e2: number[] },
   ctx: CanvasRenderingContext2D,
 ) => {
   ctx.beginPath();
@@ -30,10 +37,15 @@ const draw = (
   const R_BIG = R_SMALL * Proportions.R_BIG;
   const R_MEDIUM = R_SMALL * Proportions.R_MEDIUM;
 
-  const bigArcDots = getArcDots(centerX, centerY, R_BIG, 0, 360);
-  const affineBigArcDots = bigArcDots.map(
-    affineTransformation(angle),
+  const bigArcDots = getArcDots(
+    centerX,
+    centerY,
+    R_BIG,
+    0,
+    360,
   );
+  const affineStrategy = affineTransformation(vectors);
+  const affineBigArcDots = bigArcDots.map(affineStrategy);
   build(ctx, affineBigArcDots);
 
   // centered
@@ -45,7 +57,7 @@ const draw = (
     360,
   );
   const affineCenteredDots = centeredArcDots.map(
-    affineTransformation(angle),
+    affineStrategy,
   );
   build(ctx, affineCenteredDots);
 
@@ -64,11 +76,9 @@ const draw = (
     -45,
     225,
   );
-  const affineTopArcDots = topArcDost.map(
-    affineTransformation(angle),
-  );
+  const affineTopArcDots = topArcDost.map(affineStrategy);
   const affineBottomArcDots = bottomArcDots.map(
-    affineTransformation(angle),
+    affineStrategy,
   );
   build(ctx, affineTopArcDots);
   build(ctx, affineBottomArcDots);
@@ -89,11 +99,9 @@ const draw = (
     315,
   );
   const affineRightArcDots = rightArcDots.map(
-    affineTransformation(angle),
+    affineStrategy,
   );
-  const affineLeftArcDots = leftArcDots.map(
-    affineTransformation(angle),
-  );
+  const affineLeftArcDots = leftArcDots.map(affineStrategy);
   build(ctx, affineRightArcDots);
   build(ctx, affineLeftArcDots);
 
@@ -120,9 +128,7 @@ const draw = (
       y: centerY,
     },
   ];
-  const affineSquareDots = squareDots.map(
-    affineTransformation(angle),
-  );
+  const affineSquareDots = squareDots.map(affineStrategy);
   build(ctx, affineSquareDots);
 
   // medium
@@ -157,16 +163,29 @@ const draw = (
     315,
   );
   const affineBigRightCircleDots = bigRightCircleDots.map(
-    affineTransformation(angle),
+    affineStrategy,
   );
   const affineBigLeftCircleDots = bigLeftCircleDots.map(
-    affineTransformation(angle),
+    affineStrategy,
   );
   build(ctx, affineBigRightCircleDots);
   build(ctx, affineBigLeftCircleDots);
 
   ctx.stroke();
   ctx.lineWidth = 1;
+};
+
+const buildGrid = (
+  ctx: CanvasRenderingContext2D,
+  affineVectors: { e1: number[]; e2: number[] },
+  dots: Array<Array<{ x: number; y: number }>>,
+) => {
+  const buildFunc = R.pipe(
+    R.map(R.map(affineTransformation(affineVectors))),
+    R.map(build(ctx)),
+  );
+
+  buildFunc(dots);
 };
 
 const buildAffine = () => {
@@ -176,18 +195,26 @@ const buildAffine = () => {
   const buildInput = <HTMLInputElement>(
     document.getElementById('build')
   );
-  const radius = <HTMLInputElement>(
-    document.getElementById('euclidRadius')
+  const e1 = <HTMLInputElement>(
+    document.getElementById('e1')
   );
-  const centerX = <HTMLInputElement>(
-    document.getElementById('euclidCenterX')
+  const e2 = <HTMLInputElement>(
+    document.getElementById('e2')
   );
-  const centerY = <HTMLInputElement>(
-    document.getElementById('euclidCenterY')
-  );
-  const rotation = <HTMLInputElement>(
-    document.getElementById('euclidRotation')
-  );
+
+  const [e11, e12, e13] = getAffineVector(e1.value);
+  const [e21, e22, e23] = getAffineVector(e2.value);
+  const affineVectors = {
+    e1: [e11, e12, e13],
+    e2: [e21, e22, e23],
+  };
+  const affineAxisVectors = {
+    e1: [e11, e12, 0],
+    e2: [e21, e22, 0],
+  };
+  const radius = 25;
+  const centerX = 270;
+  const centerY = 270;
 
   if (!canvas.getContext) {
     throw new Error('No canvas');
@@ -200,12 +227,58 @@ const buildAffine = () => {
     '2d',
   );
 
-  drawAffineXAxis(canvasWidth, 20, ctx);
-  drawAffineYAxis(canvasWidth, 20, ctx);
-  drawDividerXAffineLines(canvasWidth, 20, ctx);
-  drawDividerYAffineLines(canvasHeight, 20, ctx);
+  //* initial draw
+  const axesDots = [
+    ...drawXAxis(canvasWidth, ctx),
+    ...drawYAxis(canvasHeight, ctx),
+  ];
+  const dividerDots = [
+    ...drawDividerXLines(canvasWidth),
+    ...drawDividerYLines(canvasHeight),
+  ];
 
-  draw(R_SMALL, +centerX.value, +centerY.value, 20, ctx);
+  ctx.beginPath();
+  buildGrid(ctx, affineAxisVectors, axesDots);
+  ctx.strokeStyle = '#808080';
+  buildGrid(ctx, affineAxisVectors, dividerDots);
+  ctx.stroke();
+  ctx.strokeStyle = 'black';
+
+  draw(+radius, +centerX, +centerY, affineVectors, ctx);
+
+  buildInput.onclick = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const [e11, e12, e13] = getAffineVector(e1.value);
+    const [e21, e22, e23] = getAffineVector(e2.value);
+    const affineVectors = {
+      e1: [e11, e12, e13],
+      e2: [e21, e22, e23],
+    };
+    const affineAxisVectors = {
+      e1: [e11, e12, 0],
+      e2: [e21, e22, 0],
+    };
+    // eslint-disable-next-line
+    const axesDots = [
+      ...drawXAxis(canvasWidth, ctx),
+      ...drawYAxis(canvasHeight, ctx),
+    ];
+    // eslint-disable-next-line
+    const dividerDots = [
+      ...drawDividerXLines(canvasWidth),
+      ...drawDividerYLines(canvasHeight),
+    ];
+
+    ctx.beginPath();
+    ctx.strokeStyle = 'black';
+    buildGrid(ctx, affineAxisVectors, axesDots);
+    ctx.strokeStyle = '#808080';
+    buildGrid(ctx, affineAxisVectors, dividerDots);
+    ctx.stroke();
+    ctx.strokeStyle = 'black';
+    draw(+radius, +centerX, +centerY, affineVectors, ctx);
+  };
 };
 
 window.onload = () => {
