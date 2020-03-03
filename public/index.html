@@ -9,34 +9,51 @@
   <title>Lab1</title>
 </head>
 <body>
-<a href="/" id="euclid-link">Euclid</a>
-<a href="/affine.html" id="affine-link">Affine</a>
-<a href="/projective.html" id="projective-link">Projective</a>
+  <a href="/" id="euclid-link">Euclid</a>
+  <a href="/affine.html" id="affine-link">Affine</a>
+  <a href="/projective.html" id="projective-link">Projective</a>
 
-<div class="inputs">
-  <div class="input">
-    <p>Radius</p>
-    <input type="text" placeholder="radius" id="euclidRadius" value="25">
-  </div>
-  <div class="input">
-    <p>center X</p>
-    <input type="text" placeholder="radius" id="euclidCenterX" value="270">
-  </div>
-  <div class="input">
-    <p>Center y</p>
-    <input type="text" placeholder="radius" id="euclidCenterY" value="270">
-  </div>
-  <div class="input">
-    <p>Rotation</p>
-    <input type="text" placeholder="radius" id="euclidRotation" value="0">
-  </div>
-  <button type="submit" id="build">Build</button>
-</div>
+  <h1>Euclid</h1>
+  <h2>Use keyboard arrows to move figure</h2>
 
+  <div class="inputs">
+    <div class="input">
+      <p>center X</p>
+      <input type="text" id="euclidCenterX" value="270" disabled class="no-border">
+    </div>
+    <div class="input">
+      <p>Center y</p>
+      <input type="text" id="euclidCenterY" value="270" disabled class="no-border">
+    </div>
+    <div class="input">
+      <p>Delta X</p>
+      <input type="text" id="deltaX" value="0" disabled class="no-border">
+    </div>
+    <div class="input">
+      <p>Delta Y</p>
+      <input type="text" id="deltaY" value="0" disabled class="no-border">
+    </div>
+  </div>
+
+  <div class="inputs">
+    <div class="input">
+      <p>Rotation</p>
+      <input type="text" placeholder="rotation" id="euclidRotation" value="0">
+    </div>
+    <div class="input">
+      <p>Rotation X</p>
+      <input type="text" placeholder="radius" id="rotationX" value="270">
+    </div>
+    <div class="input">
+      <p>Rotation Y</p>
+      <input type="text" placeholder="radius" id="rotationY" value="270">
+    </div>
+    <button id="rotate">Rotate</button>
+  </div>
+  
 
   <p id="info-division"></p>
   <canvas id="euclid" width="600" height="600"></canvas>
-  <!-- <canvas id="affine" width="1100" height="1100"></canvas> -->
 
   <script src="../src/euclidCtx.ts"></script>
 </body>

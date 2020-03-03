@@ -25,6 +25,8 @@ const draw = (
   centerX: number,
   centerY: number,
   rotation: number,
+  rotationX: number,
+  rotationY: number,
   ctx: CanvasRenderingContext2D,
 ) => {
   const R_SMALL = smallRadius * Proportions.R_SMALL;
@@ -34,9 +36,22 @@ const draw = (
   ctx.beginPath();
   ctx.lineWidth = 2;
 
-  drawArc(centerX, centerY, R_BIG, 0, 360, ctx);
+  const arcDots = getArcDots(centerX, centerY, R_BIG, 0, 360);
+  const euclidArcDots = euclidTransformations(
+    arcDots,
+    { x: rotationX, y: rotationY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidArcDots);
+
   // centered
-  drawArc(centerX, centerY, R_SMALL, 0, 360, ctx);
+  const centeredArcDots = getArcDots(centerX, centerY, R_SMALL, 0, 360);
+  const euclidCenteredArcDots = euclidTransformations(
+    centeredArcDots,
+    { x: rotationX, y: rotationY, angle: rotation },
+    null,
+  );
+  build(ctx, euclidCenteredArcDots);
 
   // top / bottom
   const topArcDots = getArcDots(
@@ -48,7 +63,7 @@ const draw = (
   );
   const euclidTopArcDots = euclidTransformations(
     topArcDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   build(ctx, euclidTopArcDots);
@@ -62,7 +77,7 @@ const draw = (
   );
   const euclidBottomArcDots = euclidTransformations(
     bottomArcDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   build(ctx, euclidBottomArcDots);
@@ -77,7 +92,7 @@ const draw = (
   );
   const euclidRightArcDots = euclidTransformations(
     rightArcDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   build(ctx, euclidRightArcDots);
@@ -91,7 +106,7 @@ const draw = (
   );
   const euclidLefttArcDots = euclidTransformations(
     leftArcDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   build(ctx, euclidLefttArcDots);
@@ -121,7 +136,7 @@ const draw = (
   ];
   const euclidSquareDots = euclidTransformations(
     squareDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   build(ctx, euclidSquareDots);
@@ -159,12 +174,12 @@ const draw = (
   );
   const euclidBigRightCircleDots = euclidTransformations(
     bigRightCircleDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   const euclidBigLeftCircleDots = euclidTransformations(
     bigLeftCircleDots,
-    { x: centerX, y: centerY, angle: rotation },
+    { x: rotationX, y: rotationY, angle: rotation },
     null,
   );
   build(ctx, euclidBigRightCircleDots);
@@ -178,20 +193,31 @@ const buildEuclid = () => {
   const canvas = <HTMLCanvasElement>(
     document.getElementById('euclid')
   );
-  const buildInput = <HTMLInputElement>(
-    document.getElementById('build')
-  );
-  const radius = <HTMLInputElement>(
-    document.getElementById('euclidRadius')
-  );
+
   const centerX = <HTMLInputElement>(
     document.getElementById('euclidCenterX')
   );
   const centerY = <HTMLInputElement>(
     document.getElementById('euclidCenterY')
   );
+  const deltaX = <HTMLInputElement>(
+    document.getElementById('deltaX')
+  );
+  const deltaY = <HTMLInputElement>(
+    document.getElementById('deltaY')
+  );
+
+  const rotateInput = <HTMLInputElement>(
+    document.getElementById('rotate')
+  );
   const rotation = <HTMLInputElement>(
     document.getElementById('euclidRotation')
+  );
+  const rotationX = <HTMLInputElement>(
+    document.getElementById('rotationX')
+  );
+  const rotationY = <HTMLInputElement>(
+    document.getElementById('rotationY')
   );
 
   if (!canvas.getContext) {
@@ -229,15 +255,21 @@ const buildEuclid = () => {
   ctx.stroke();
   ctx.strokeStyle = 'black';
 
+  const radius = 25;
+
   draw(
-    +radius.value,
+    radius,
     +centerX.value,
     +centerY.value,
     +rotation.value,
+    +rotationX.value,
+    +rotationY.value,
     ctx,
   );
 
-  buildInput.onclick = () => {
+  let rotationState = 0;
+
+  rotateInput.onclick = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // eslint-disable-next-line
@@ -259,12 +291,17 @@ const buildEuclid = () => {
     ctx.strokeStyle = 'black';
 
     draw(
-      +radius.value,
+      radius,
       +centerX.value,
       +centerY.value,
-      +rotation.value,
+      +rotation.value + rotationState,
+      +rotationX.value,
+      +rotationY.value,
       ctx,
     );
+
+    rotationState += +rotation.value;
+    rotation.value = '0';
   };
 
   window.onkeydown = (event: any) => {
@@ -320,14 +357,19 @@ const buildEuclid = () => {
     ctx.strokeStyle = 'black';
 
     draw(
-      +radius.value,
+      radius,
       +inputX.value + x,
       +inputY.value + y,
       +rotation.value,
+      +rotationX.value,
+      +rotationY.value,
       ctx,
     );
     inputX.value = `${+centerX.value + x}`;
     inputY.value = `${+centerY.value + y}`;
+
+    deltaX.value = +deltaX.value + +x;
+    deltaY.value = +deltaY.value + +y;
   };
 };
 

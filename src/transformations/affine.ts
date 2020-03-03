@@ -26,6 +26,7 @@ export const test = R.curry(
 interface Basis {
   e1: number[];
   e2: number[];
+  e3: number[];
 }
 
 interface Dot {
@@ -36,11 +37,12 @@ interface Dot {
 export const affineTransformation = R.curry((basis: Basis, dot: Dot): Dot => {
   const [e11, e12, e13] = basis.e1;
   const [e21, e22, e23] = basis.e2;
+  const [e31, e32, e33] = basis.e3;
 
   const affineMatrix = M.matrix([
     [e11, e12, e13],
     [e21, e22, e23],
-    [0, 0, 1],
+    [e31, e32, e33],
   ]);
   const dotMatrix = M.matrix([dot.x, dot.y, 1]);
   const matrix = M.multiply(affineMatrix, dotMatrix);

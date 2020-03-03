@@ -13,20 +13,54 @@
 <a href="/affine.html" id="affine-link">Affine</a>
 <a href="/projective.html" id="projective-link">Projective</a>
 
+<h1>Affine</h1>
 <div class="inputs">
   <div class="input">
-    <p>e1</p>
-    <input type="text" placeholder="e1" id="e1" value="1,0.4,0">
+    <p>e11</p>
+    <input type="text" placeholder="e11" id="e11" value="1">
   </div>
   <div class="input">
-    <p>e2</p>
-    <input type="text" placeholder="e2" id="e2" value="0,1,0">
+    <p>e12</p>
+    <input type="text" placeholder="e12" id="e12" value="0.1">
   </div>
-  <button type="submit" id="build">Build</button>
+  <div class="input">
+    <p>e13</p>
+    <input type="text" placeholder="e13" id="e13" value="0">
+  </div>
+</div>
+<div class="inputs">
+  <div class="input">
+    <p>e21</p>
+    <input type="text" placeholder="e21" id="e21" value="0">
+  </div>
+  <div class="input">
+    <p>e22</p>
+    <input type="text" placeholder="e22" id="e22" value="1">
+  </div>
+  <div class="input">
+    <p>e23</p>
+    <input type="text" placeholder="e23" id="e23" value="0">
+  </div>
+</div>
+<div class="inputs hidden">
+  <div class="input">
+    <p>e31</p>
+    <input type="text" placeholder="e31" id="e31" value="0">
+  </div>
+  <div class="input">
+    <p>e32</p>
+    <input type="text" placeholder="e32" id="e32" value="0">
+  </div>
+  <div class="input">
+    <p>e33</p>
+    <input type="text" placeholder="e33" id="e33" value="1">
+  </div>
 </div>
 
+<button type="submit" id="build">Build</button>
 
-  <p id="info-division"></p>
+
+  <p id="info-division">Division: 50</p>
   <!-- <canvas id="euclid" width="1100" height="1100"></canvas> -->
   <canvas id="affine" width="600" height="600"></canvas>
 

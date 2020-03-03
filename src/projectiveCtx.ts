@@ -18,16 +18,11 @@ import {
   Proportions,
 } from './constants';
 
-const getAffineVector = R.pipe(
-  (vectorString: string) => vectorString.split(','),
-  R.map((vector: string) => +vector),
-);
-
 const draw = (
   smallRadius: number,
   centerX: number,
   centerY: number,
-  vectors: { e1: number[]; e2: number[] },
+  vectors: { e1: number[]; e2: number[], e3: number[]},
   ctx: CanvasRenderingContext2D,
 ) => {
   ctx.beginPath();
@@ -46,6 +41,7 @@ const draw = (
   );
   const strategy = projectiveTransformation(vectors);
   const affineBigArcDots = bigArcDots.map(strategy);
+  console.log({ affineBigArcDots });
   build(ctx, affineBigArcDots);
 
   // centered
@@ -177,7 +173,7 @@ const draw = (
 
 const buildGrid = (
   ctx: CanvasRenderingContext2D,
-  affineVectors: { e1: number[]; e2: number[] },
+  affineVectors: { e1: number[]; e2: number[], e3: number[] },
   dots: Array<Array<{ x: number; y: number }>>,
 ) => {
   const buildFunc = R.pipe(
@@ -195,22 +191,43 @@ const buildAffine = () => {
   const buildInput = <HTMLInputElement>(
     document.getElementById('build')
   );
-  const e1 = <HTMLInputElement>(
-    document.getElementById('e1')
+  const e11 = <HTMLInputElement>(
+    document.getElementById('e11')
   );
-  const e2 = <HTMLInputElement>(
-    document.getElementById('e2')
+  const e12 = <HTMLInputElement>(
+    document.getElementById('e12')
+  );
+  const e13 = <HTMLInputElement>(
+    document.getElementById('e13')
+  );
+  const e21 = <HTMLInputElement>(
+    document.getElementById('e21')
+  );
+  const e22 = <HTMLInputElement>(
+    document.getElementById('e22')
+  );
+  const e23 = <HTMLInputElement>(
+    document.getElementById('e23')
+  );
+  const e31 = <HTMLInputElement>(
+    document.getElementById('e31')
+  );
+  const e32 = <HTMLInputElement>(
+    document.getElementById('e32')
+  );
+  const e33 = <HTMLInputElement>(
+    document.getElementById('e33')
   );
 
-  const [e11, e12, e13, w1] = getAffineVector(e1.value);
-  const [e21, e22, e23, w2] = getAffineVector(e2.value);
   const affineVectors = {
-    e1: [e11, e12, e13, w1],
-    e2: [e21, e22, e23, w2],
+    e1: [+e11.value, +e12.value, +e13.value],
+    e2: [+e21.value, +e22.value, +e23.value],
+    e3: [+e31.value, +e32.value, +e33.value],
   };
   const affineAxisVectors = {
-    e1: [e11, e12, 0, w1],
-    e2: [e21, e22, 0, w2],
+    e1: [+e11.value, +e12.value, 0],
+    e2: [+e21.value, +e22.value, 0],
+    e3: [+e31.value, +e32.value, 1],
   };
   const radius = 25;
   const centerX = 270;
@@ -249,15 +266,17 @@ const buildAffine = () => {
   buildInput.onclick = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const [e11, e12, e13, w1] = getAffineVector(e1.value);
-    const [e21, e22, e23, w2] = getAffineVector(e2.value);
+    // eslint-disable-next-line
     const affineVectors = {
-      e1: [e11, e12, e13, w1],
-      e2: [e21, e22, e23, w2],
+      e1: [+e11.value, +e12.value, +e13.value],
+      e2: [+e21.value, +e22.value, +e23.value],
+      e3: [+e31.value, +e32.value, +e33.value],
     };
+    // eslint-disable-next-line
     const affineAxisVectors = {
-      e1: [e11, e12, 0, w1],
-      e2: [e21, e22, 0, w2],
+      e1: [+e11.value, +e12.value, 0],
+      e2: [+e21.value, +e22.value, 0],
+      e3: [+e31.value, +e32.value, 1],
     };
     // eslint-disable-next-line
     const axesDots = [

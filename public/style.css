@@ -17,3 +17,11 @@ button {
   height: 20px;
   align-self: flex-end;
 }
+
+.no-border {
+  border: 0;
+}
+
+.hidden {
+  display: none;
+}
