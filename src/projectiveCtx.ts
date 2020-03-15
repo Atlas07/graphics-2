@@ -225,9 +225,9 @@ const buildAffine = () => {
     e3: [+e31.value, +e32.value, +e33.value],
   };
   const affineAxisVectors = {
-    e1: [+e11.value, +e12.value, 0],
-    e2: [+e21.value, +e22.value, 0],
-    e3: [+e31.value, +e32.value, 1],
+    e1: [+e11.value, +e12.value, +e13.value],
+    e2: [+e21.value, +e22.value, +e23.value],
+    e3: [+e31.value, +e32.value, +e33.value],
   };
   const radius = 25;
   const centerX = 270;

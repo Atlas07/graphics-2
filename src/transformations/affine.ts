@@ -40,9 +40,9 @@ export const affineTransformation = R.curry((basis: Basis, dot: Dot): Dot => {
   const [e31, e32, e33] = basis.e3;
 
   const affineMatrix = M.matrix([
-    [e11, e12, e13],
-    [e21, e22, e23],
-    [e31, e32, e33],
+    [e11 / 50, e12 / 50, e13 / 50],
+    [e21 / 50, e22 / 50, e23 / 50],
+    [e31 / 50, e32 / 50, e33 / 50],
   ]);
   const dotMatrix = M.matrix([dot.x, dot.y, 1]);
   const matrix = M.multiply(affineMatrix, dotMatrix);
