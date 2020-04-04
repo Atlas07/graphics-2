@@ -10,33 +10,37 @@ import {
   build,
 } from './utils';
 
-interface Dot {
-  x: number;
-  y: number;
-}
 
-const getCurveDot = (
-  u: number,
-  a: number,
-  b: number,
-  c: number,
-) => a * (1 - u) ** 2 + 2 * b * (1 - u) * u + c * u ** 2;
-
-const getCurveDots = (aDot: Dot, bDot: Dot, cDot: Dot) => {
-  const dots = [];
-  for (let u = 0; u <= 1; u += 0.01) {
-    dots.push({
-      x: getCurveDot(u, aDot.x, bDot.x, cDot.x),
-      y: getCurveDot(u, aDot.y, bDot.y, cDot.y),
-    });
-  }
-
-  return dots;
-};
 
 const buildPath = () => {
   const canvas = <HTMLCanvasElement>(
     document.getElementById('path')
+  );
+
+  const centerX = <HTMLInputElement>(
+    document.getElementById('euclidCenterX')
+  );
+  const centerY = <HTMLInputElement>(
+    document.getElementById('euclidCenterY')
+  );
+  const deltaX = <HTMLInputElement>(
+    document.getElementById('deltaX')
+  );
+  const deltaY = <HTMLInputElement>(
+    document.getElementById('deltaY')
+  );
+
+  const rotateInput = <HTMLInputElement>(
+    document.getElementById('rotate')
+  );
+  const rotation = <HTMLInputElement>(
+    document.getElementById('euclidRotation')
+  );
+  const rotationX = <HTMLInputElement>(
+    document.getElementById('rotationX')
+  );
+  const rotationY = <HTMLInputElement>(
+    document.getElementById('rotationY')
   );
 
   if (!canvas.getContext) {
@@ -341,18 +345,24 @@ const buildPath = () => {
       { x: 365, y: 10 },
       { x: 351, y: 70 },
     ],
-  ];
+  ].map(dots =>
+    dots.map(dot => ({
+      x: dot.x + INITIAL_X,
+      y: canvasHeight - dot.y - INITIAL_Y,
+    })),
+  );
 
-  const curvedDots = arr
-    .map(dots =>
-      dots.map(dot => ({
-        x: dot.x + INITIAL_X,
-        y: canvasHeight - dot.y - INITIAL_Y,
-      })),
-    )
-    .map(dots => getCurveDots(dots[0], dots[1], dots[2]));
+  const curvedDots = arr.map(dots =>
+    getCurveDots(dots[0], dots[1], dots[2]),
+  );
 
   ctx.beginPath();
+  ctx.strokeStyle = 'red';
+  arr.map(build(ctx));
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = 'black';
   curvedDots.map(build(ctx));
   ctx.stroke();
 };
